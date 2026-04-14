@@ -24,7 +24,7 @@ class QueryRequest(BaseModel):
 @app.post("/query")
 async def query_travel_agent(query:QueryRequest):
     try:
-        print(query)
+        print("API KEY:", os.getenv("GROQ_API_KEY"))
         graph = GraphBuilder(model_provider="groq")
         react_app=graph()
         #react_app = graph.build_graph()
@@ -35,7 +35,11 @@ async def query_travel_agent(query:QueryRequest):
 
         print(f"Graph saved as 'my_graph.png' in {os.getcwd()}")
         # Assuming request is a pydantic object like: {"question": "your text"}
-        messages={"messages": [query.question]}
+        messages = {
+            "messages": [
+                {"role": "user", "content": query.question}
+           ]
+     }
         output = react_app.invoke(messages)
 
         # If result is dict with messages:
